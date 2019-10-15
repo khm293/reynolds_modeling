@@ -11,7 +11,7 @@ namespace import Parflow::*
 
 pfset FileVersion 4
 
-pfset Process.Topology.P        1
+pfset Process.Topology.P        28
 pfset Process.Topology.Q        1
 pfset Process.Topology.R        1
 
@@ -150,7 +150,7 @@ pfset TimeStep.MinStep           0.0001
 # Porosity
 #-----------------------------------------------------------------------------
 
-pfset Geom.Porosity.GeomNames          domain
+pfset Geom.Porosity.GeomNames          "domain"
 
 pfset Geom.domain.Porosity.Type    Constant
 pfset Geom.domain.Porosity.Value   0.1
@@ -220,19 +220,19 @@ pfset Patch.bottom.BCPressure.alltime.Value		0.0
 
 pfset Patch.top.BCPressure.Type		             OverlandFlow
 pfset Patch.top.BCPressure.Cycle		            "constant"
-pfset Patch.top.BCPressure.alltime.Value	      -0.01
+pfset Patch.top.BCPressure.alltime.Value	        0.0
 
 #-----------------------------------------------------------------------------
 # Topo slopes in x-direction
 #-----------------------------------------------------------------------------
-# pfset TopoSlopesX.Type                                "PFBFile"
-# pfset TopoSlopesX.GeomNames                           "domain"
-# pfset TopoSlopesX.FileName                            "AA.slopex.pfb"
+ pfset TopoSlopesX.Type                                "PFBFile"
+ pfset TopoSlopesX.GeomNames                           "domain"
+ pfset TopoSlopesX.FileName                            "AA.slopex.pfb"
 
-pfset TopoSlopesX.Type "Constant"
-pfset TopoSlopesX.GeomNames ""
+#pfset TopoSlopesX.Type "Constant"
+#pfset TopoSlopesX.GeomNames ""
 
-pfset TopoSlopesX.Geom.domain.Value 0.0
+#pfset TopoSlopesX.Geom.domain.Value 0.0
 
 #---------------------------------------------------------
 # Topo slopes in y-direction
@@ -273,8 +273,8 @@ pfset Mannings.Geom.domain.Value                       5.52e-6
 # pfset Solver.CLM.FieldCapacity                        0.98
 # pfset Solver.CLM.IrrigationType                       none
 
-# pfset Solver.EvapTransFile                            True
-# pfset Solver.EvapTrans.FileName                       "AA_eff_rech.pfb"
+ pfset Solver.EvapTransFile                            True
+ pfset Solver.EvapTrans.FileName                       "AA_eff_rech.pfb"
 
 #---------------------------------------------------------
 # Initial conditions: water pressure
@@ -287,7 +287,7 @@ pfset Mannings.Geom.domain.Value                       5.52e-6
 
 pfset ICPressure.Type                                   HydroStaticPatch
 pfset ICPressure.GeomNames                              domain
-pfset Geom.domain.ICPressure.Value                      0.0
+pfset Geom.domain.ICPressure.Value                      10.0
 pfset Geom.domain.ICPressure.RefGeom                    domain
 pfset Geom.domain.ICPressure.RefPatch                   bottom
 
@@ -295,9 +295,9 @@ pfset Geom.domain.ICPressure.RefPatch                   bottom
 # Phase sources:
 #-----------------------------------------------------------------------------
 
-pfset PhaseSources.water.Type                         Constant
-pfset PhaseSources.water.GeomNames                    background
-pfset PhaseSources.water.Geom.background.Value        0.0
+pfset PhaseSources.water.Type                         "Constant"
+pfset PhaseSources.water.GeomNames                    "domain"
+pfset PhaseSources.water.Geom.domain.Value        0.0
 
 
 #-----------------------------------------------------------------------------
