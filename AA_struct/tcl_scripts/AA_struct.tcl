@@ -53,7 +53,7 @@ pfset ComputationalGrid.NZ                      50
 #---------------------------------------------------------
 # The Names of the GeomInputs
 #---------------------------------------------------------
-pfset GeomInput.Names "domain_input"
+pfset GeomInput.Names "domain_input basalt_input granite_input"
 
 
 #---------------------------------------------------------
@@ -76,13 +76,62 @@ pfset Geom.domain.Upper.Z                          500.0
 
 pfset Geom.domain.Patches "left right front back bottom top"
 
+#---------------------------------------------------------
+# Basalt Geometry Input
+#---------------------------------------------------------
+pfset GeomInput.basalt_input.InputType            Box
+pfset GeomInput.basalt_input.GeomName             basalt
+
+
+#---------------------------------------------------------
+# Basalt Geometry
+#---------------------------------------------------------
+pfset Geom.basalt.Lower.X                          0.0 
+pfset Geom.basalt.Lower.Y                          0.0
+pfset Geom.basalt.Lower.Z                          400.0
+
+pfset Geom.basalt.Upper.X                          8730.0
+pfset Geom.basalt.Upper.Y                          10.0
+pfset Geom.basalt.Upper.Z                          500.0
+
+pfset Geom.basalt.Patches "left right front back bottom top"
+
+#---------------------------------------------------------
+# Granite Geometry Input
+#---------------------------------------------------------
+pfset GeomInput.granite_input.InputType            Box
+pfset GeomInput.granite_input.GeomName             granite
+
+
+#---------------------------------------------------------
+# Granite Geometry
+#---------------------------------------------------------
+pfset Geom.granite.Lower.X                          0.0 
+pfset Geom.granite.Lower.Y                          0.0
+pfset Geom.granite.Lower.Z                          0.0
+
+pfset Geom.granite.Upper.X                          8730.0
+pfset Geom.granite.Upper.Y                          10.0
+pfset Geom.granite.Upper.Z                          400.0
+
+pfset Geom.granite.Patches "left right front back bottom top"
+
 #-----------------------------------------------------------------------------
 # Perm
 #-----------------------------------------------------------------------------
-pfset Geom.Perm.Names "domain"
+# pfset Geom.Perm.Names "domain"
+# 
+# pfset Geom.domain.Perm.Type     Constant
+# pfset Geom.domain.Perm.Value    0.036 
 
-pfset Geom.domain.Perm.Type     Constant
-pfset Geom.domain.Perm.Value    0.036 
+pfset Geom.Perm.Names "basalt granite"
+
+pfset Geom.basalt.Perm.Type     Constant
+pfset Geom.basalt.Perm.Value    0.036
+
+pfset Geom.granite.Perm.Type     Constant
+pfset Geom.granite.Perm.Value    0.00036
+
 
 pfset Perm.TensorType               TensorByGeom
 
@@ -130,17 +179,15 @@ pfset Gravity				1.0
 pfset TimingInfo.BaseUnit        1.0
 pfset TimingInfo.StartCount      0.0
 pfset TimingInfo.StartTime       0.0
-pfset TimingInfo.StopTime        1000.0
-pfset TimingInfo.DumpInterval    10.0
+pfset TimingInfo.StopTime        10000000.0
+pfset TimingInfo.DumpInterval    100000.0
 
-pfset TimeStep.Type Constant
-pfset TimeStep.Value 1.0
 
-# pfset TimeStep.Type              Growth
-# pfset TimeStep.InitialStep       0.0001
-# pfset TimeStep.GrowthFactor      1.4
-# pfset TimeStep.MaxStep           1000
-# pfset TimeStep.MinStep           0.0001
+pfset TimeStep.Type              Growth
+pfset TimeStep.InitialStep       0.0001
+pfset TimeStep.GrowthFactor      1.01
+pfset TimeStep.MaxStep           100
+pfset TimeStep.MinStep           0.0001
 
 # pfset TimingInfo.BaseUnit        10.0
 # pfset TimingInfo.StartCount      0
@@ -154,11 +201,18 @@ pfset TimeStep.Value 1.0
 # Porosity
 #-----------------------------------------------------------------------------
 
-pfset Geom.Porosity.GeomNames          "domain"
+# pfset Geom.Porosity.GeomNames          "domain"
+# 
+# pfset Geom.domain.Porosity.Type    Constant
+# pfset Geom.domain.Porosity.Value   0.1
 
-pfset Geom.domain.Porosity.Type    Constant
-pfset Geom.domain.Porosity.Value   0.1
+pfset Geom.Porosity.GeomNames          "basalt granite"
 
+pfset Geom.basalt.Porosity.Type    Constant
+pfset Geom.basalt.Porosity.Value   0.1
+
+pfset Geom.granite.Porosity.Type    Constant
+pfset Geom.granite.Porosity.Value   0.05
 
 #-----------------------------------------------------------------------------
 # Domain

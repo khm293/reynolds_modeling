@@ -20,11 +20,11 @@ pfset Process.Topology.R 1
 cd "./Outputs"
 
 # ParFlow Inputs
-  file copy -force "../../parflow_inputs/AA.slopex.pfb" .
+  file copy -force "../../parflow_inputs/BB.slopex.pfb" .
 # file copy -force "../../parflow_inputs/LW.slopey.pfb" .
 # file copy -force "../../parflow_inputs/IndicatorFile_Gleeson.50z.pfb"   .
 # file copy -force "../../parflow_inputs/press.init.pfb"  .
-  file copy -force "../../parflow_inputs/AA_eff_rech.pfb" .
+  file copy -force "../../parflow_inputs/BB_eff_rech.pfb" .
 
 
 #CLM Inputs
@@ -45,7 +45,7 @@ pfset ComputationalGrid.DX	                 	10.0
 pfset ComputationalGrid.DY                      10.0
 pfset ComputationalGrid.DZ	                 	10.0
 
-pfset ComputationalGrid.NX                      873
+pfset ComputationalGrid.NX                      1294
 pfset ComputationalGrid.NY                      1
 pfset ComputationalGrid.NZ                      50
 
@@ -53,7 +53,7 @@ pfset ComputationalGrid.NZ                      50
 #---------------------------------------------------------
 # The Names of the GeomInputs
 #---------------------------------------------------------
-pfset GeomInput.Names "domain_input"
+pfset GeomInput.Names "domain_input basalt_input granite_input"
 
 
 #---------------------------------------------------------
@@ -70,19 +70,68 @@ pfset Geom.domain.Lower.X                          0.0
 pfset Geom.domain.Lower.Y                          0.0
 pfset Geom.domain.Lower.Z                          0.0
 
-pfset Geom.domain.Upper.X                          8730.0
+pfset Geom.domain.Upper.X                          12940.0
 pfset Geom.domain.Upper.Y                          10.0
 pfset Geom.domain.Upper.Z                          500.0
 
 pfset Geom.domain.Patches "left right front back bottom top"
 
+#---------------------------------------------------------
+# Basalt Geometry Input
+#---------------------------------------------------------
+pfset GeomInput.basalt_input.InputType            Box
+pfset GeomInput.basalt_input.GeomName             basalt
+
+
+#---------------------------------------------------------
+# Basalt Geometry
+#---------------------------------------------------------
+pfset Geom.basalt.Lower.X                          0.0 
+pfset Geom.basalt.Lower.Y                          0.0
+pfset Geom.basalt.Lower.Z                          400.0
+
+pfset Geom.basalt.Upper.X                          12940.0
+pfset Geom.basalt.Upper.Y                          10.0
+pfset Geom.basalt.Upper.Z                          500.0
+
+pfset Geom.basalt.Patches "left right front back bottom top"
+
+#---------------------------------------------------------
+# Granite Geometry Input
+#---------------------------------------------------------
+pfset GeomInput.granite_input.InputType            Box
+pfset GeomInput.granite_input.GeomName             granite
+
+
+#---------------------------------------------------------
+# Granite Geometry
+#---------------------------------------------------------
+pfset Geom.granite.Lower.X                          0.0 
+pfset Geom.granite.Lower.Y                          0.0
+pfset Geom.granite.Lower.Z                          0.0
+
+pfset Geom.granite.Upper.X                          12940.0
+pfset Geom.granite.Upper.Y                          10.0
+pfset Geom.granite.Upper.Z                          400.0
+
+pfset Geom.granite.Patches "left right front back bottom top"
+
 #-----------------------------------------------------------------------------
 # Perm
 #-----------------------------------------------------------------------------
-pfset Geom.Perm.Names "domain"
+# pfset Geom.Perm.Names "domain"
+# 
+# pfset Geom.domain.Perm.Type     Constant
+# pfset Geom.domain.Perm.Value    0.036 
 
-pfset Geom.domain.Perm.Type     Constant
-pfset Geom.domain.Perm.Value    0.036 
+pfset Geom.Perm.Names "basalt granite"
+
+pfset Geom.basalt.Perm.Type     Constant
+pfset Geom.basalt.Perm.Value    0.036
+
+pfset Geom.granite.Perm.Type     Constant
+pfset Geom.granite.Perm.Value    0.00036
+
 
 pfset Perm.TensorType               TensorByGeom
 
@@ -130,17 +179,15 @@ pfset Gravity				1.0
 pfset TimingInfo.BaseUnit        1.0
 pfset TimingInfo.StartCount      0.0
 pfset TimingInfo.StartTime       0.0
-pfset TimingInfo.StopTime        1000.0
-pfset TimingInfo.DumpInterval    10.0
+pfset TimingInfo.StopTime        10000000.0
+pfset TimingInfo.DumpInterval    100000.0
 
-pfset TimeStep.Type Constant
-pfset TimeStep.Value 1.0
 
-# pfset TimeStep.Type              Growth
-# pfset TimeStep.InitialStep       0.0001
-# pfset TimeStep.GrowthFactor      1.4
-# pfset TimeStep.MaxStep           1000
-# pfset TimeStep.MinStep           0.0001
+pfset TimeStep.Type              Growth
+pfset TimeStep.InitialStep       0.0001
+pfset TimeStep.GrowthFactor      1.01
+pfset TimeStep.MaxStep           100
+pfset TimeStep.MinStep           0.0001
 
 # pfset TimingInfo.BaseUnit        10.0
 # pfset TimingInfo.StartCount      0
@@ -154,11 +201,18 @@ pfset TimeStep.Value 1.0
 # Porosity
 #-----------------------------------------------------------------------------
 
-pfset Geom.Porosity.GeomNames          "domain"
+# pfset Geom.Porosity.GeomNames          "domain"
+# 
+# pfset Geom.domain.Porosity.Type    Constant
+# pfset Geom.domain.Porosity.Value   0.1
 
-pfset Geom.domain.Porosity.Type    Constant
-pfset Geom.domain.Porosity.Value   0.1
+pfset Geom.Porosity.GeomNames          "basalt granite"
 
+pfset Geom.basalt.Porosity.Type    Constant
+pfset Geom.basalt.Porosity.Value   0.1
+
+pfset Geom.granite.Porosity.Type    Constant
+pfset Geom.granite.Porosity.Value   0.05
 
 #-----------------------------------------------------------------------------
 # Domain
@@ -236,7 +290,7 @@ pfset Patch.top.BCPressure.Cycle		            "constant"
 pfset Patch.top.BCPressure.alltime.Value	     		0.0
 
 pfset Solver.EvapTransFile                            True
-pfset Solver.EvapTrans.FileName                       "AA_eff_rech.pfb"
+pfset Solver.EvapTrans.FileName                       "BB_eff_rech.pfb"
 
 
 
@@ -245,7 +299,7 @@ pfset Solver.EvapTrans.FileName                       "AA_eff_rech.pfb"
 #-----------------------------------------------------------------------------
 pfset TopoSlopesX.Type                                "PFBFile"
 pfset TopoSlopesX.GeomNames                           "domain"
-pfset TopoSlopesX.FileName                            "AA.slopex.pfb"
+pfset TopoSlopesX.FileName                            "BB.slopex.pfb"
 
 # pfset TopoSlopesX.Type "Constant"
 # pfset TopoSlopesX.GeomNames "domain"
@@ -444,22 +498,22 @@ pfset Solver.Linear.Preconditioner.PCMatrixType     	FullJacobian
 #-----------------------------------------------------------------------------
 # Distribute inputs
 #-----------------------------------------------------------------------------
-pfset ComputationalGrid.NX                873
+pfset ComputationalGrid.NX                1294
 pfset ComputationalGrid.NY                1 
 pfset ComputationalGrid.NZ                1
-pfdist AA.slopex.pfb
+pfdist BB.slopex.pfb
 
-pfset ComputationalGrid.NX                873 
+pfset ComputationalGrid.NX                1294 
 pfset ComputationalGrid.NY                1 
 pfset ComputationalGrid.NZ                50
 #pfdist geology_indicator.pfb
-pfdist AA_eff_rech.pfb
+pfdist BB_eff_rech.pfb
 
 
 #-----------------------------------------------------------------------------
 # Run Simulation 
 #-----------------------------------------------------------------------------
-set runname "AA"
+set runname "BB"
 puts $runname
 #pfwritedb $runname
 pfrun    $runname
@@ -469,10 +523,10 @@ pfrun    $runname
 ##-----------------------------------------------------------------------------
 pfundist $runname
 #pfundist press.init.pfb
-pfundist AA.slopex.pfb
+pfundist BB.slopex.pfb
 #pfundist tucson.slopey.pfb
 #pfundist geology_indicator.pfb
-pfundist AA_eff_rech.pfb
+pfundist BB_eff_rech.pfb
 
 puts "ParFlow run Complete"
 

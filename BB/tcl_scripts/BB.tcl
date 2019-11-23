@@ -1,28 +1,26 @@
-#  This runs the basic default_richards test case.
-#  This run, as written in this input file, should take
-#  3 nonlinear iterations.
-
 #
 # Import the ParFlow TCL package
-#
-lappend auto_path $env(PARFLOW_DIR)/bin 
-package require parflow
+
+lappend   auto_path $env(PARFLOW_DIR)/bin
+package   require parflow
 namespace import Parflow::*
 
-pfset FileVersion 4
+pfset     FileVersion    4
 
-pfset Process.Topology.P        1
-pfset Process.Topology.Q        1
-pfset Process.Topology.R        1
-
+#-----------------------------------------------------------------------------
+# Set Processor topology 
+#-----------------------------------------------------------------------------
+pfset Process.Topology.P 1
+pfset Process.Topology.Q 1
+pfset Process.Topology.R 1
 #-----------------------------------------------------------------------------
 # Make a directory for the simulation and copy inputs into it
 #-----------------------------------------------------------------------------
-exec mkdir "Outputs"
+#exec mkdir "Outputs"
 cd "./Outputs"
 
 # ParFlow Inputs
-file copy -force "../../parflow_inputs/BB.slopex.pfb" .
+  file copy -force "../../parflow_inputs/BB.slopex.pfb" .
 # file copy -force "../../parflow_inputs/LW.slopey.pfb" .
 # file copy -force "../../parflow_inputs/IndicatorFile_Gleeson.50z.pfb"   .
 # file copy -force "../../parflow_inputs/press.init.pfb"  .
@@ -51,16 +49,19 @@ pfset ComputationalGrid.NX                      1294
 pfset ComputationalGrid.NY                      1
 pfset ComputationalGrid.NZ                      50
 
+
 #---------------------------------------------------------
 # The Names of the GeomInputs
 #---------------------------------------------------------
 pfset GeomInput.Names "domain_input"
+
 
 #---------------------------------------------------------
 # Domain Geometry Input
 #---------------------------------------------------------
 pfset GeomInput.domain_input.InputType            Box
 pfset GeomInput.domain_input.GeomName             domain
+
 
 #---------------------------------------------------------
 # Domain Geometry
@@ -81,23 +82,23 @@ pfset Geom.domain.Patches "left right front back bottom top"
 pfset Geom.Perm.Names "domain"
 
 pfset Geom.domain.Perm.Type     Constant
-pfset Geom.domain.Perm.Value    0.0001
+pfset Geom.domain.Perm.Value    0.036 
 
 pfset Perm.TensorType               TensorByGeom
 
 pfset Geom.Perm.TensorByGeom.Names  "domain"
 
-pfset Geom.domain.Perm.TensorValX  1.0
-pfset Geom.domain.Perm.TensorValY  1.0
-pfset Geom.domain.Perm.TensorValZ  1.0
+pfset Geom.domain.Perm.TensorValX  1.0d0
+pfset Geom.domain.Perm.TensorValY  1.0d0
+pfset Geom.domain.Perm.TensorValZ  1.0d0
+
 
 #-----------------------------------------------------------------------------
 # Specific Storage
 #-----------------------------------------------------------------------------
-
-pfset SpecificStorage.Type            Constant
-pfset SpecificStorage.GeomNames       "domain"
-pfset Geom.domain.SpecificStorage.Value 1.0e-4
+pfset SpecificStorage.Type                Constant
+pfset SpecificStorage.GeomNames           "domain"
+pfset Geom.domain.SpecificStorage.Value   1.0e-5
 
 #-----------------------------------------------------------------------------
 # Phases
@@ -117,11 +118,6 @@ pfset Phase.water.Viscosity.Value	1.0
 pfset Contaminants.Names			""
 
 #-----------------------------------------------------------------------------
-# Retardation
-#-----------------------------------------------------------------------------
-pfset Geom.Retardation.GeomNames           ""
-
-#-----------------------------------------------------------------------------
 # Gravity
 #-----------------------------------------------------------------------------
 
@@ -134,64 +130,81 @@ pfset Gravity				1.0
 pfset TimingInfo.BaseUnit        1.0
 pfset TimingInfo.StartCount      0.0
 pfset TimingInfo.StartTime       0.0
-pfset TimingInfo.StopTime        1000000.0
+pfset TimingInfo.StopTime        10000.0
 pfset TimingInfo.DumpInterval    1000.0
 
-#pfset TimeStep.Type              Constant
-#pfset TimeStep.Value             1.0
+# pfset TimeStep.Type Constant
+# pfset TimeStep.Value 1.0
 
 pfset TimeStep.Type              Growth
 pfset TimeStep.InitialStep       0.0001
-pfset TimeStep.GrowthFactor      1.4
-pfset TimeStep.MaxStep           1000
+pfset TimeStep.GrowthFactor      1.1
+pfset TimeStep.MaxStep           100
 pfset TimeStep.MinStep           0.0001
+
+# pfset TimingInfo.BaseUnit        10.0
+# pfset TimingInfo.StartCount      0
+# pfset TimingInfo.StartTime       0.0
+# pfset TimingInfo.StopTime        7000.0
+# pfset TimingInfo.DumpInterval    1000.0
+# pfset TimeStep.Type              Constant
+# pfset TimeStep.Value             1000.0
 
 #-----------------------------------------------------------------------------
 # Porosity
 #-----------------------------------------------------------------------------
 
-pfset Geom.Porosity.GeomNames          domain
+pfset Geom.Porosity.GeomNames          "domain"
 
 pfset Geom.domain.Porosity.Type    Constant
 pfset Geom.domain.Porosity.Value   0.1
 
+
 #-----------------------------------------------------------------------------
 # Domain
 #-----------------------------------------------------------------------------
-pfset Domain.GeomName domain
+pfset Domain.GeomName "domain"
+
+#----------------------------------------------------------------------------
+# Mobility
+#----------------------------------------------------------------------------
+pfset Phase.water.Mobility.Type        Constant
+pfset Phase.water.Mobility.Value       1.0
+
+#-----------------------------------------------------------------------------
+# Wells
+#-----------------------------------------------------------------------------
+pfset Wells.Names                         ""
+
+#-----------------------------------------------------------------------------
+# Time Cycles
+#-----------------------------------------------------------------------------
+pfset Cycle.Names                         "constant"
+pfset Cycle.constant.Names                "alltime"
+pfset Cycle.constant.alltime.Length        1
+pfset Cycle.constant.Repeat               -1
 
 #-----------------------------------------------------------------------------
 # Relative Permeability
 #-----------------------------------------------------------------------------
 
 pfset Phase.RelPerm.Type               VanGenuchten
-pfset Phase.RelPerm.GeomNames          domain
-pfset Geom.domain.RelPerm.Alpha        0.005
+pfset Phase.RelPerm.GeomNames          "domain"
+pfset Geom.domain.RelPerm.Alpha        3.5
 pfset Geom.domain.RelPerm.N            2.0    
+
 
 #---------------------------------------------------------
 # Saturation
 #---------------------------------------------------------
 
 pfset Phase.Saturation.Type            VanGenuchten
-pfset Phase.Saturation.GeomNames       domain
-pfset Geom.domain.Saturation.Alpha     0.005
+pfset Phase.Saturation.GeomNames       "domain"
+pfset Geom.domain.Saturation.Alpha     3.5
 pfset Geom.domain.Saturation.N         2.0
-pfset Geom.domain.Saturation.SRes      0.2
-pfset Geom.domain.Saturation.SSat      0.99
+pfset Geom.domain.Saturation.SRes      0.02
+pfset Geom.domain.Saturation.SSat      1.0
 
-#-----------------------------------------------------------------------------
-# Wells
-#-----------------------------------------------------------------------------
-pfset Wells.Names                           ""
-
-#-----------------------------------------------------------------------------
-# Time Cycles
-#-----------------------------------------------------------------------------
-pfset Cycle.Names constant
-pfset Cycle.constant.Names		"alltime"
-pfset Cycle.constant.alltime.Length	 1
-pfset Cycle.constant.Repeat		-1
 
 #-----------------------------------------------------------------------------
 # Boundary Conditions: Pressure
@@ -220,7 +233,12 @@ pfset Patch.bottom.BCPressure.alltime.Value		0.0
 
 pfset Patch.top.BCPressure.Type		             OverlandFlow
 pfset Patch.top.BCPressure.Cycle		            "constant"
-pfset Patch.top.BCPressure.alltime.Value	      0.0
+pfset Patch.top.BCPressure.alltime.Value	     		0.0
+
+pfset Solver.EvapTransFile                            True
+pfset Solver.EvapTrans.FileName                       "BB_eff_rech.pfb"
+
+
 
 #-----------------------------------------------------------------------------
 # Topo slopes in x-direction
@@ -229,14 +247,20 @@ pfset TopoSlopesX.Type                                "PFBFile"
 pfset TopoSlopesX.GeomNames                           "domain"
 pfset TopoSlopesX.FileName                            "BB.slopex.pfb"
 
+# pfset TopoSlopesX.Type "Constant"
+# pfset TopoSlopesX.GeomNames "domain"
+# 
+# pfset TopoSlopesX.Geom.domain.Value 0.0
+# 
+
 #---------------------------------------------------------
 # Topo slopes in y-direction
 #---------------------------------------------------------
 
-pfset TopoSlopesY.Type "Constant"
-pfset TopoSlopesY.GeomNames ""
+pfset TopoSlopesY.Type 								"Constant"
+pfset TopoSlopesY.GeomNames 						"domain"
+pfset TopoSlopesY.Geom.domain.Value 					0.0
 
-pfset TopoSlopesY.Geom.domain.Value 0.0
 
 #-----------------------------------------------------------------------------
 # Mannings coefficient
@@ -245,31 +269,31 @@ pfset Mannings.Type                                   "Constant"
 pfset Mannings.GeomNames                              "domain"
 pfset Mannings.Geom.domain.Value                       5.52e-6
 
+
 #----------------------------------------------------------------
 # CLM Settings:
 # ------------------------------------------------------------
 #for spin-up runs, CLM is initially turned off
-pfset Solver.LSM                                        none
-pfset Solver.CLM.CLMFileDir                           "clm_output/"
-pfset Solver.CLM.Print1dOut                           False
-pfset Solver.BinaryOutDir                             False
-pfset Solver.CLM.CLMDumpInterval                      1
+#pfset Solver.LSM                                        none
+# pfset Solver.CLM.CLMFileDir                           "clm_output/"
+# pfset Solver.CLM.Print1dOut                           False
+# pfset Solver.BinaryOutDir                             False
+# pfset Solver.CLM.CLMDumpInterval                      1
  
-pfset Solver.CLM.MetForcing                           3D
-pfset Solver.CLM.MetFileName                          "NLDAS"
-pfset Solver.CLM.MetFilePath                          "../NLDAS/"
-pfset Solver.CLM.MetFileNT                            24
-pfset Solver.CLM.IstepStart                           1
+# pfset Solver.CLM.MetForcing                           3D
+# pfset Solver.CLM.MetFileName                          "NLDAS"
+# pfset Solver.CLM.MetFilePath                          "../NLDAS/"
+# pfset Solver.CLM.MetFileNT                            24
+# pfset Solver.CLM.IstepStart                           1
  
-pfset Solver.CLM.EvapBeta                             Linear
-pfset Solver.CLM.VegWaterStress                       Saturation
-pfset Solver.CLM.ResSat                               0.1
-pfset Solver.CLM.WiltingPoint                         0.12
-pfset Solver.CLM.FieldCapacity                        0.98
-pfset Solver.CLM.IrrigationType                       none
+# pfset Solver.CLM.EvapBeta                             Linear
+# pfset Solver.CLM.VegWaterStress                       Saturation
+# pfset Solver.CLM.ResSat                               0.1
+# pfset Solver.CLM.WiltingPoint                         0.12
+# pfset Solver.CLM.FieldCapacity                        0.98
+# pfset Solver.CLM.IrrigationType                       none
 
-pfset Solver.EvapTransFile                            True
-pfset Solver.EvapTrans.FileName                       "BB_eff_rech.pfb"
+
 
 #---------------------------------------------------------
 # Initial conditions: water pressure
@@ -286,14 +310,16 @@ pfset Geom.domain.ICPressure.Value                      0.0
 pfset Geom.domain.ICPressure.RefGeom                    domain
 pfset Geom.domain.ICPressure.RefPatch                   bottom
 
+pfset OverlandFlowSpinUp  1
+pfset OverlandSpinupDampP1 1.0
+pfset OverlandSpinupDampP2 0.00001
+
 #-----------------------------------------------------------------------------
 # Phase sources:
 #-----------------------------------------------------------------------------
-
-pfset PhaseSources.water.Type                         Constant
-pfset PhaseSources.water.GeomNames                    background
-pfset PhaseSources.water.Geom.background.Value        0.0
-
+pfset PhaseSources.water.Type                         "Constant"
+pfset PhaseSources.water.GeomNames                    "domain"
+pfset PhaseSources.water.Geom.domain.Value            0.0
 
 #-----------------------------------------------------------------------------
 # Exact solution specification for error calculations
@@ -329,20 +355,18 @@ pfset Solver.WriteSiloCLM                             False
 #-----------------------------------------------------------------------------
 # Set solver parameters
 #-----------------------------------------------------------------------------
-# ParFlow Solution
-pfset Solver                                          Richards
-pfset Solver.TerrainFollowingGrid                     True
+# Variable dz
 pfset Solver.Nonlinear.VariableDz                     True
 pfset dzScale.GeomNames                               domain
 pfset dzScale.Type                                    nzList
-pfset dzScale.nzListNumber                            50 # 500 m total
-pfset Cell.0.dzScale.Value                             20.0 #200 m
-pfset Cell.1.dzScale.Value                             2.0 #100 m
-pfset Cell.2.dzScale.Value                             2.0
+pfset dzScale.nzListNumber                            50 
+pfset Cell.0.dzScale.Value                             10.0 
+pfset Cell.1.dzScale.Value                             8.0 
+pfset Cell.2.dzScale.Value                             6.0
 pfset Cell.3.dzScale.Value                             2.0
 pfset Cell.4.dzScale.Value                             2.0
-pfset Cell.5.dzScale.Value                             2.0
-pfset Cell.6.dzScale.Value                             1.0 #100 m
+pfset Cell.5.dzScale.Value                             2.0 
+pfset Cell.6.dzScale.Value                             1.0 
 pfset Cell.7.dzScale.Value                             1.0
 pfset Cell.8.dzScale.Value                             1.0
 pfset Cell.9.dzScale.Value                             1.0
@@ -352,7 +376,7 @@ pfset Cell.12.dzScale.Value                            1.0
 pfset Cell.13.dzScale.Value                            1.0
 pfset Cell.14.dzScale.Value                            1.0
 pfset Cell.15.dzScale.Value                            1.0 
-pfset Cell.16.dzScale.Value                            0.5 #99 m
+pfset Cell.16.dzScale.Value                            0.5 
 pfset Cell.17.dzScale.Value                            0.5
 pfset Cell.18.dzScale.Value                            0.5
 pfset Cell.19.dzScale.Value                            0.5
@@ -370,13 +394,13 @@ pfset Cell.30.dzScale.Value                            0.5
 pfset Cell.31.dzScale.Value                            0.5
 pfset Cell.32.dzScale.Value                            0.5
 pfset Cell.33.dzScale.Value                            0.5
-pfset Cell.34.dzScale.Value                            0.5
-pfset Cell.35.dzScale.Value                            0.5
+pfset Cell.34.dzScale.Value                            0.5 
+pfset Cell.35.dzScale.Value                            0.1 
 pfset Cell.36.dzScale.Value                            0.1
 pfset Cell.37.dzScale.Value                            0.1
-pfset Cell.38.dzScale.Value                            0.1
-pfset Cell.39.dzScale.Value                            0.1
-pfset Cell.40.dzScale.Value                            0.02 #1 m
+pfset Cell.38.dzScale.Value                            0.05
+pfset Cell.39.dzScale.Value                            0.05 
+pfset Cell.40.dzScale.Value                            0.02 
 pfset Cell.41.dzScale.Value                            0.02 
 pfset Cell.42.dzScale.Value                            0.01
 pfset Cell.43.dzScale.Value                            0.01
@@ -385,47 +409,52 @@ pfset Cell.45.dzScale.Value                            0.01
 pfset Cell.46.dzScale.Value                            0.01
 pfset Cell.47.dzScale.Value                            0.006
 pfset Cell.48.dzScale.Value                            0.003
-pfset Cell.49.dzScale.Value                            0.001
+pfset Cell.49.dzScale.Value                            0.001 
 
-pfset Solver.MaxIter                                  25000
-pfset Solver.Drop                                     1E-20
-pfset Solver.AbsTol                                   1E-8
-pfset Solver.MaxConvergenceFailures                   8
-pfset Solver.Nonlinear.MaxIter                        80
-pfset Solver.Nonlinear.ResidualTol                    1e-6
+#Parflow solution
+pfset Solver                                             Richards
+pfset Solver.MaxIter                                     2500
 
-## new solver settings for Terrain Following Grid
+pfset Solver.TerrainFollowingGrid                        True
+
+
+pfset Solver.Nonlinear.MaxIter                           80 
+pfset Solver.Nonlinear.ResidualTol                       1e-5
+pfset Solver.Nonlinear.EtaValue                          0.001
+
+
+pfset Solver.PrintSubsurf								False
+pfset  Solver.Drop                                      1E-20
+pfset Solver.AbsTol                                     1E-10
+
+
 pfset Solver.Nonlinear.EtaChoice                         EtaConstant
 pfset Solver.Nonlinear.EtaValue                          0.001
 pfset Solver.Nonlinear.UseJacobian                       True 
-pfset Solver.Nonlinear.DerivativeEpsilon                 1e-16
-pfset Solver.Nonlinear.StepTol	                         1e-30
+pfset Solver.Nonlinear.StepTol							 1e-25
 pfset Solver.Nonlinear.Globalization                     LineSearch
-pfset Solver.Linear.KrylovDimension                      70
-pfset Solver.Linear.MaxRestarts                          2
+pfset Solver.Linear.KrylovDimension                      80
+pfset Solver.Linear.MaxRestarts                           2
 
+pfset Solver.Linear.Preconditioner                       MGSemi
 pfset Solver.Linear.Preconditioner                       PFMG
-pfset Solver.Linear.Preconditioner.PCMatrixType          FullJacobian
-
-#keys for first round of spin-up
-pfset OverlandFlowSpinUp                             1
-pfset OverlandSpinupDampP1                           10.0
-pfset OverlandSpinupDampP2                           0.1
+pfset Solver.Linear.Preconditioner.PCMatrixType     	FullJacobian
 
 
 #-----------------------------------------------------------------------------
 # Distribute inputs
 #-----------------------------------------------------------------------------
-pfset ComputationalGrid.NX                873
+pfset ComputationalGrid.NX                1294
 pfset ComputationalGrid.NY                1 
 pfset ComputationalGrid.NZ                1
 pfdist BB.slopex.pfb
 
-pfset ComputationalGrid.NX                873 
+pfset ComputationalGrid.NX                1294 
 pfset ComputationalGrid.NY                1 
 pfset ComputationalGrid.NZ                50
 #pfdist geology_indicator.pfb
 pfdist BB_eff_rech.pfb
+
 
 #-----------------------------------------------------------------------------
 # Run Simulation 
